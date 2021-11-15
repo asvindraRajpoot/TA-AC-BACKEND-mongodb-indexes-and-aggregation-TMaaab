@@ -8,7 +8,7 @@ Write aggregation queries to perform following tasks.
 db.users.aggregate([{$match:{isActive:true}}])
 
 2. Find all users whose name includes `blake` case insensitive.
-
+db.users.find( { 'name' : { '$regex' : 'blake', '$options' : 'i' } } )
 3. Find all males.
 db.users.aggregate([{$match:{gender:"male"}}])
 4. Find all active males.
@@ -43,7 +43,7 @@ green -> 123
 db.users.aggregate([{$group:{_id:"$eyeColor",count:{$sum:1}}}])
 
 13. Count all females whose tags array include `amet` in it.
-db.users.aggregate([{$match:{gender:"female",tags:"amet"}},{$group:{count:{$sum:1}}}])
+db.users.aggregate([{$match:{gender:"female",tags:{$all:["amet"]}}},{$group:{_id:null,count:{$sum:1}}}])
 
 14. Find the average age of entire collection
 db.users.aggregate([{$group:{_id:null,avg_age:{$avg:"$age"}}}])
@@ -65,7 +65,7 @@ db.users.aggregate([{$match:{gender:"female",age:{$gte:30}}},{$group:{_id:"$age"
 21. Group all 23+ males with blue eyes working in Germany.
 db.users.aggregate([{$match:{gender:"male",eyeColor:"blue",age:{$gte:23},"company.location.country":"Germany"}},{$group:{_id:"$age"}}])
 22. Group all by tag names i.e. use \$unwind since tags are array.
-
+db.users.aggregate([{$unwind:"$tags"},{$group:{_id:"$tags"}}])
 23. Group all males whose favoriteFruit is `banana` who have registered before 2015.
 db.users.aggregate([{$match:{gender:"male",registered:{$lte:2015},favoriteFruit:"banana"}},{$group:{_id:"$name"}}])
 24. Group all females by their favoriteFruit.
